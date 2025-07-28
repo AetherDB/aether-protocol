@@ -31,4 +31,5 @@ pub enum Response {
     LastInsertId(u64),
     RecordWithRelated(Option<(Record, Record)>),
     BatchResponse(BatchResponse),
+    RecordIdSet(Vec<String>),
 }

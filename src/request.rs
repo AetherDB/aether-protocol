@@ -54,4 +54,9 @@ pub enum Request {
         related_collection: String, 
     },
     ExecuteBatchGet(BatchRequest),
+    Search {
+        db_name: String,
+        collection: String,
+        query: String,
+    },
 }
