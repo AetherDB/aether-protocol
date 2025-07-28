@@ -305,6 +305,13 @@ mod tests {
                 db_name: "users".to_string(),
                 collection: "users".to_string(),
                 query: "John Doe".to_string(),
+                field: Some("name".to_string()),
+            },
+            Request::Search {
+                db_name: "users".to_string(),
+                collection: "users".to_string(),
+                query: "John Doe".to_string(),
+                field: None, // The field is absent
             },
         ];
         
