@@ -54,7 +54,7 @@ pub struct DbStats {
 /// A request object for a batch of read operations.
 #[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 pub struct BatchRequest {
-    pub requests: HashMap<String, (String, String)>, // Key -> (Collection, Record ID)
+    pub requests: HashMap<String, (String, String, String)>, // Key -> (DB Name, Collection, Record ID)
 }
 
 /// The response from a batch read operation.

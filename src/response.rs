@@ -13,7 +13,12 @@ pub enum Response {
     Success,
     Error(String),
 
-    // --- DB Management Responses ---
+    // --- Database Management Responses ---
+    DatabaseList(Vec<String>),
+    DatabaseCreated(bool),
+    DatabaseDropped(bool),
+
+    // --- Collection Management Responses ---
     CollectionList(Vec<String>),
     Stats(DbStats),
     IndexList(Vec<String>),

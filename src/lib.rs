@@ -155,8 +155,8 @@ mod tests {
     #[test]
     fn test_batch_request_serialization() {
         let mut requests = HashMap::new();
-        requests.insert("key1".to_string(), ("users".to_string(), "user_1".to_string()));
-        requests.insert("key2".to_string(), ("products".to_string(), "product_1".to_string()));
+        requests.insert("key1".to_string(), ("testdb".to_string(), "users".to_string(), "user_1".to_string()));
+        requests.insert("key2".to_string(), ("testdb".to_string(), "products".to_string(), "product_1".to_string()));
         
         let batch_request = BatchRequest { requests };
         // Can use bincode for this since it doesn't have serde_json::Value
@@ -186,28 +186,37 @@ mod tests {
     fn test_request_serialization() {
         // Test all Request variants
         let requests = vec![
-            // DB Management
+            // Database Management
+            Request::CreateDatabase { db_name: "testdb".to_string() },
+            Request::DropDatabase { db_name: "testdb".to_string() },
+            Request::ListDatabases,
+            
+            // Collection Management
             Request::ListCollections,
-            Request::CreateCollection { name: "users".to_string() },
-            Request::DropCollection { name: "temp".to_string() },
+            Request::CreateCollection { db_name: "users".to_string(), collection_name: "users".to_string() },
+            Request::DropCollection { db_name: "users".to_string(), collection_name: "users".to_string() },
             Request::GetStats,
             Request::Flush,
             
             // Index Management
             Request::CreateIndex {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 field_name: "email".to_string(),
             },
             Request::DropIndex {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 field_name: "email".to_string(),
             },
             Request::ListIndexes {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
             },
             
             // CRUD Operations
             Request::CreateRecord {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 record_id: "user123".to_string(),
                 data: {
@@ -218,6 +227,7 @@ mod tests {
                 },
             },
             Request::UpdateRecord {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 record_id: "user123".to_string(),
                 data: {
@@ -227,6 +237,7 @@ mod tests {
                 },
             },
             Request::UpsertRecord {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 record_id: "user123".to_string(),
                 data: {
@@ -237,10 +248,12 @@ mod tests {
                 },
             },
             Request::GetRecord {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 record_id: "user123".to_string(),
             },
             Request::DeleteRecord {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 record_id: "user123".to_string(),
                 cascade: true,
@@ -249,6 +262,7 @@ mod tests {
             
             // Querying & Relational
             Request::FindRecords {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 filter: crate::types::Filter::And(vec![
                     crate::types::Filter::Equals {
@@ -267,6 +281,7 @@ mod tests {
                 }),
             },
             Request::CountRecords {
+                db_name: "users".to_string(),
                 collection: "users".to_string(),
                 filter: crate::types::Filter::Equals {
                     field: "active".to_string(),
@@ -274,6 +289,7 @@ mod tests {
                 },
             },
             Request::GetRecordWithRelated {
+                db_name: "users".to_string(),
                 primary_collection: "orders".to_string(),
                 primary_record_id: "order123".to_string(),
                 relation_key_field: "user_id".to_string(),
@@ -281,8 +297,8 @@ mod tests {
             },
             Request::ExecuteBatchGet({
                 let mut requests = HashMap::new();
-                requests.insert("key1".to_string(), ("users".to_string(), "user123".to_string()));
-                requests.insert("key2".to_string(), ("products".to_string(), "product456".to_string()));
+                requests.insert("key1".to_string(), ("testdb".to_string(), "users".to_string(), "user123".to_string()));
+                requests.insert("key2".to_string(), ("testdb".to_string(), "products".to_string(), "product456".to_string()));
                 crate::types::BatchRequest { requests }
             }),
         ];
@@ -300,7 +316,16 @@ mod tests {
             Response::Success,
             Response::Error("Invalid request format".to_string()),
             
-            // DB Management Responses
+            // Database Management Responses
+            Response::DatabaseList(vec![
+                "testdb".to_string(),
+                "userdb".to_string(),
+                "analytics".to_string(),
+            ]),
+            Response::DatabaseCreated(true),
+            Response::DatabaseDropped(true),
+            
+            // Collection Management Responses
             Response::CollectionList(vec![
                 "users".to_string(),
                 "products".to_string(),
