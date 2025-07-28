@@ -58,5 +58,7 @@ pub enum Request {
         db_name: String,
         collection: String,
         query: String,
+        field: Option<String>, // An optional field to search within. If None, search all fields.
+
     },
 }
