@@ -18,6 +18,13 @@ Add `aether-protocol` as a dependency in your `Cargo.toml`:
 [dependencies]
 aether-protocol = "0.5.0"
 ```
+or
+
+```bash
+cargo add aether-protocol
+```
+
+## Examples
 
 ```rust
 use aether_protocol::{Request, Response};
