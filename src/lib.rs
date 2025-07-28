@@ -19,6 +19,7 @@ pub mod types;
 pub use request::Request;
 pub use response::Response;
 pub use types::{BatchRequest, BatchResponse, DbStats, Direction, Filter, QueryOptions, Record, RecordSet};
+pub use response::QueryMetrics;
 
 #[cfg(test)]
 mod tests {
@@ -414,4 +415,28 @@ mod tests {
             test_serialization_json(response);
         }
     }
+}
+#[test]
+fn test_result_metrics_serialization() {
+    // 1. Create the inner data (the actual result of a query).
+    let record_set = RecordSet { records: vec![] };
+    let inner_response = Response::RecordSet(record_set);
+
+    // 2. Create the metrics data.
+    let metrics = QueryMetrics {
+        execution_time_micros: 12345,
+    };
+
+    // 3. Wrap them in the new ResultMetrics response.
+    let original_response = Response::ResultMetrics {
+        data: Box::new(inner_response),
+        metrics,
+    };
+
+    // 4. Serialize and deserialize the response.
+    let bytes = bincode::serialize(&original_response).unwrap();
+    let deserialized_response: Response = bincode::deserialize(&bytes).unwrap();
+
+    // 5. Assert that the data survived the round trip perfectly.
+    assert_eq!(original_response, deserialized_response);
 }
