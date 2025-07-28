@@ -6,6 +6,13 @@
 use crate::types::{BatchResponse, DbStats, Record, RecordSet};
 use serde::{Deserialize, Serialize};
 
+/// A struct to hold performance metrics for a query.
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct QueryMetrics {
+    pub execution_time_micros: u64,
+    // We can add more later, like records_scanned, etc.
+}
+
 /// The primary enum representing all possible server responses.
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum Response {
@@ -32,4 +39,10 @@ pub enum Response {
     RecordWithRelated(Option<(Record, Record)>),
     BatchResponse(BatchResponse),
     RecordIdSet(Vec<String>),
+
+    /// A special response that wraps another response and includes performance data.
+    ResultMetrics {
+        data: Box<Response>, // The original response (e.g., RecordSet)
+        metrics: QueryMetrics,
+    },
 }
