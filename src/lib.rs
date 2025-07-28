@@ -301,6 +301,11 @@ mod tests {
                 requests.insert("key2".to_string(), ("testdb".to_string(), "products".to_string(), "product456".to_string()));
                 crate::types::BatchRequest { requests }
             }),
+            Request::Search {
+                db_name: "users".to_string(),
+                collection: "users".to_string(),
+                query: "John Doe".to_string(),
+            },
         ];
         
         for request in requests {
