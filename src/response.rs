@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct QueryMetrics {
     pub execution_time_micros: u64,
-    // We can add more later, like records_scanned, etc.
+    // More planned for later, like records_scanned, etc.
 }
 
 /// The primary enum representing all possible server responses.
